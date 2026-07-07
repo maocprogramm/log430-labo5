@@ -109,17 +109,29 @@ def request_payment_link(order_id, total_amount, user_id):
     payment_transaction = {
         "user_id": user_id,
         "order_id": order_id,
-        "total_amount": total_amount
+        "total_amount": float(total_amount)
     }
 
-    # TODO: Requête à POST /payments
-    print("")
-    response_from_payment_service = {}
+    url = "https://api-gateway:8080/payments-api/payments"
+    
+    try:
+        response_from_payment_service = requests.post(
+            url,
+            json=payment_transaction,
+            headers={'Content-Type': 'application/json'}
+        )
+        
+        if response_from_payment_service.ok:
+            response_data = response_from_payment_service.json()
+            payment_id = response_data.get('payment_id', response_data.get('id', 0))
+            print(f"ID paiement: {payment_id}")
+        else:
+            print(f"Erreur du service de paiement: {response_from_payment_service.status_code} - {response_from_payment_service.text}")
+            
+    except Exception as e:
+        print(f"Échec de la connexion à la passerelle KrakenD: {e}")
 
-    if True: # if response.ok
-        print(f"ID paiement: {payment_id}")
-
-    return f"http://api-gateway:8080/payments-api/payments/process/{payment_id}" 
+    return f"https://api-gateway:8080/payments-api/payments/process/{payment_id}" 
 
 def delete_order(order_id: int):
     """Delete order in MySQL, keep Redis in sync"""

@@ -82,7 +82,7 @@ services:
       timeout: 10s
       retries: 5
       start_period: 10s
-
+  
   krakend:
     image: devopsfaith/krakend:2.7
     container_name: api-gateway
