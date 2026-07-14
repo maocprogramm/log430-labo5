@@ -13,8 +13,9 @@ def create_user(request):
     payload = request.get_json() or {}
     name = payload.get('name')
     email = payload.get('email')
+    user_type_id = payload.get('user_type_id')
     try:
-        user_id = add_user(name, email)
+        user_id = add_user(name, email, user_type_id)
         return jsonify({'user_id': user_id}), 201
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -30,9 +31,9 @@ def remove_user(user_id):
         return jsonify({'error': str(e)}), 500
 
 def get_user(user_id):
-    """Create user, use ReadUser model"""
+    """Get user by ID, use ReadUser model"""
     try:
         user = get_user_by_id(user_id)
-        return jsonify(user), 201
+        return jsonify(user), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
